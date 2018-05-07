@@ -1,0 +1,12 @@
+1. Lambda (index.js) accepts 3 environment variables: GIT_TOKEN, WIKI_USER, WIKI_PASS, and calls releasenotes.js
+
+2. create_notes (releasenotes.js) pulls the latest two tags, gets the delta of commit ids, gets the commit messages of these commit ids, discards the "merge" messages and pushes to confluence.
+
+3. Confluence Return codes  
+	3.1 200 status is returned for a successful push to confluence.
+
+	3.2 If the page with same title already exists 400 status is returned.
+
+	3.3 If no new commit messages are found, the page is created saying "no changes".
+
+4. Tags should be created immediately after merge in branch with prefix versionx.x. Eg. version0.1, version0.2, version1 etc.
