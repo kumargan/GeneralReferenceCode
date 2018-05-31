@@ -1,0 +1,70 @@
+import os, boto3
+from datetime import datetime, timedelta, timezone
+
+def lambda_handler(event, context):
+    connection = boto3.client('emr', region_name='us-east-1')
+    yesterdayImpressions=datetime.strftime(datetime.now(timezone.utc) - timedelta(1), '%Y-%m-%d')
+    yesterdayClicks=datetime.strftime(datetime.now(timezone.utc) - timedelta(1), '%Y-%m-%d')
+
+    cluster_id = connection.run_job_flow(
+    Name='360-dfppclicks-spark-ETL-load-parquet',
+    ReleaseLabel='emr-5.9.0',
+    LogUri='s3n://aws-logs-650377115526-us-east-1/elasticmapreduce/',
+    Instances={
+        'InstanceGroups': [
+            {
+                'Name': "Master nodes",
+                'Market': 'ON_DEMAND',
+                'InstanceRole': 'MASTER',
+                'InstanceType': 'c3.4xlarge',
+                'InstanceCount': 1,
+            },
+            {
+                'Name': "Slave nodes",
+                'Market': 'ON_DEMAND',
+                'InstanceRole': 'CORE',
+                'InstanceType': 'c3.4xlarge',
+                'InstanceCount': 6,
+            }
+        ],
+        'KeepJobFlowAliveWhenNoSteps': False,
+        'TerminationProtected': True,
+        'Ec2SubnetId': 'subnet-b46c08ed',
+    },
+    Steps=[{'Name': 'step1'
+        , 'ActionOnFailure': 'CONTINUE'
+        , 'HadoopJarStep': 
+            { 'Jar': 'command-runner.jar', 'Args': 
+                [ "spark-submit","--deploy-mode","cluster","--master","yarn","--class","com.pkg1.class","s3://bucket/subfolder/DatedFormat/shadow.jar","s3://outputbucket/raw/NetworkImpressions/"+"%LOCATION%"+"/*/","s3://outputbucket/processed/parquet/dated=%DESTINATION%", yesterdayImpressions, "1","impressions"
+                ] } },
+                {'Name': 'step 2 '+yesterdayClicks
+        , 'ActionOnFailure': 'CONTINUE'
+        , 'HadoopJarStep': 
+            { 'Jar': 'command-runner.jar', 'Args': 
+                [ "spark-submit","--deploy-mode","cluster","--master","yarn","--class","com.pkg1.class","s3://bucket/subfolder/DatedFormat/shadow.jar","s3://ti-use1-bigdata-s3-prod-bigdata/DFP_V2/raw/NetworkClicks/"+"%LOCATION%"+"/*/","s3://outputbucket/processed/parquet/dated=%DESTINATION%",yesterdayClicks, "1","clicks"
+                ] } },
+            {'Name': 'step3'
+        , 'ActionOnFailure': 'CONTINUE'
+        , 'HadoopJarStep': 
+            {   'Jar': 'command-runner.jar',
+                'Args': 
+                [ "spark-submit","--deploy-mode","client","--master","yarn","s3://bucket/Etl_Jobs_Code/subfolder/sample.py","",""
+                ] } }
+            ],
+    VisibleToAllUsers=True,
+    JobFlowRole='EMR_EC2_DefaultRole',
+    Applications=[{'Name':'Hadoop'},{'Name':'Spark'},{'Name':'Hive'}],
+    Configurations=[{"Classification":"spark","Properties":{"maximizeResourceAllocation":"true"},"Configurations":[]}],
+    ServiceRole='EMR_DefaultRole',
+    Tags=[
+        {
+            'Key': 'Name',
+            'Value': 'tmp',
+        },
+         {
+            'Key': 'owner',
+            'Value': 'user',
+        }
+    ])
+
+    print (cluster_id['JobFlowId'])

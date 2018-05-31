@@ -1,0 +1,280 @@
+	package com.pkg.job.utils;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.ec2.model.InstanceType;
+import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduceClient;
+import com.amazonaws.services.elasticmapreduce.model.ActionOnFailure;
+import com.amazonaws.services.elasticmapreduce.model.Application;
+import com.amazonaws.services.elasticmapreduce.model.BootstrapActionConfig;
+import com.amazonaws.services.elasticmapreduce.model.ClusterState;
+import com.amazonaws.services.elasticmapreduce.model.Configuration;
+import com.amazonaws.services.elasticmapreduce.model.DescribeClusterRequest;
+import com.amazonaws.services.elasticmapreduce.model.DescribeClusterResult;
+import com.amazonaws.services.elasticmapreduce.model.EbsBlockDeviceConfig;
+import com.amazonaws.services.elasticmapreduce.model.EbsConfiguration;
+import com.amazonaws.services.elasticmapreduce.model.HadoopJarStepConfig;
+import com.amazonaws.services.elasticmapreduce.model.InstanceGroupConfig;
+import com.amazonaws.services.elasticmapreduce.model.InstanceRoleType;
+import com.amazonaws.services.elasticmapreduce.model.JobFlowInstancesConfig;
+import com.amazonaws.services.elasticmapreduce.model.RunJobFlowRequest;
+import com.amazonaws.services.elasticmapreduce.model.RunJobFlowResult;
+import com.amazonaws.services.elasticmapreduce.model.ScaleDownBehavior;
+import com.amazonaws.services.elasticmapreduce.model.ScriptBootstrapActionConfig;
+import com.amazonaws.services.elasticmapreduce.model.StepConfig;
+import com.amazonaws.services.elasticmapreduce.model.TerminateJobFlowsRequest;
+import com.amazonaws.services.elasticmapreduce.model.VolumeSpecification;
+import com.amazonaws.services.elasticmapreduce.util.StepFactory;
+import com.amazonaws.services.elasticmapreduce.waiters.DescribeClusterFunction;
+import com.pkg.job.config.Config;
+
+/**
+ * @author rajs
+ *
+ */
+public class DynamicEMRClusterCreator {
+
+	public static final Logger LOG = Logger.getLogger(DynamicEMRClusterCreator.class);
+	private AmazonElasticMapReduceClient emrClient;
+	private Config config;
+
+	/**
+	 * <p>
+	 * initializing class with the configuration passed using config type json
+	 * </p>
+	 * 
+	 * @param config
+	 */
+	public void init(Config config) {
+		this.config = config;
+	}
+
+	/**
+	 * <p>
+	 * Returns EMR client
+	 * </p>
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	private AmazonElasticMapReduceClient getEmrClient() throws Exception {
+		emrClient = createEMRClient();
+		return emrClient;
+	}
+
+	/**
+	 * <p>
+	 * create EMR cluster and all the configuration is done in this function
+	 * </p>
+	 * 
+	 * @param clusterName
+	 * @return
+	 * @throws Exception
+	 */
+	public String createEMRCluster(String clusterName) throws Exception {
+
+		LOG.info("[ creating cluster with the name " + clusterName + " ]");
+
+		StepFactory stepFactory = new StepFactory();
+		// enabling debugging.
+		StepConfig stepConfig = new StepConfig().withName("Enable Debugging").withActionOnFailure("TERMINATE_JOB_FLOW")
+				.withHadoopJarStep(
+						new HadoopJarStepConfig().withJar("command-runner.jar").withArgs("state-pusher-script"));
+
+		// creating step for UDF functions.
+		StepConfig udfFunctions = new StepConfig().withActionOnFailure(ActionOnFailure.TERMINATE_CLUSTER)
+				.withHadoopJarStep(stepFactory
+						.newRunHiveScriptStepVersioned(
+								"S3//bucket/config/registerHiveUdfFunctions.hql",
+								"2.3.0")
+						.withJar("s3://us-east-1.elasticmapreduce/libs/script-runner/script-runner.jar"))
+				.withName("RegisterHiveUdfFunctions");
+
+		// hive restart script
+		StepConfig restartHiveScript = new StepConfig().withActionOnFailure(ActionOnFailure.TERMINATE_CLUSTER)
+				.withHadoopJarStep(stepFactory
+						.newScriptRunnerStep(
+								"S3//bucket/config/restartHiveScript.sh")
+						.withJar("s3://us-east-1.elasticmapreduce/libs/script-runner/script-runner.jar"))
+				.withName("Restarting Hive server");
+
+		// applications requirements for cluster
+		Application hive = new Application().withName("Hive");
+		Application pig = new Application().withName("pig");
+		Application hue = new Application().withName("hue");
+		Application hadoop = new Application().withName("hadoop");
+
+		// name node and data node configuration
+		InstanceGroupConfig master = new InstanceGroupConfig().withName("Master - 1")
+				.withInstanceType(
+						InstanceType.M4Large//M4Large
+								.toString()).withInstanceRole(InstanceRoleType.MASTER)
+				.withEbsConfiguration(new EbsConfiguration().withEbsBlockDeviceConfigs(new EbsBlockDeviceConfig()
+						.withVolumeSpecification(new VolumeSpecification().withSizeInGB(500).withVolumeType("gp2"))
+						.withVolumesPerInstance(1)).withEbsOptimized(true))
+				.withInstanceCount(config.getClusterConfig().getMasterInstanceCount());
+
+		InstanceGroupConfig core = new InstanceGroupConfig().withName("Core - 2")
+				.withInstanceType(
+						InstanceType.M4Large//M4Large//M4Large
+								.toString())
+				.withInstanceRole(InstanceRoleType.CORE)
+				.withEbsConfiguration(new EbsConfiguration().withEbsBlockDeviceConfigs(new EbsBlockDeviceConfig()
+						.withVolumeSpecification(new VolumeSpecification().withSizeInGB(50).withVolumeType("gp2"))
+						.withVolumesPerInstance(1)).withEbsOptimized(true))
+				.withInstanceCount(config.getClusterConfig().getSlaveInstanceCount());
+
+		// hive configuration details
+		Configuration hiveSiteConfig = new Configuration();
+		hiveSiteConfig.setClassification("hive-site");
+		Map<String, String> props = new HashMap<String, String>();
+		props.put("hive.enforce.bucketing", "true");
+		props.put("hive.support.concurrency", "true");
+		props.put("hive.txn.manager", "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager");
+		props.put("hive.in.test", "true");
+		props.put("hive.exec.dynamic.partition.mode", "nonstrict");
+		props.put("hive.compactor.initiator.on", "true");
+		props.put("hive.compactor.worker.threads", "2");
+		props.put("hive.mapred.reduce.tasks.speculative.execution", "false");
+		//props.put("hive.exec.parallel", "true");
+		hiveSiteConfig.setProperties(props);
+		
+		Configuration mapredSiteConfig = new Configuration();
+		mapredSiteConfig.setClassification("mapred-site");
+		props = new HashMap<String, String>();
+		props.put("mapred.map.tasks.speculative.execution", "false");
+		props.put("mapred.reduce.tasks.speculative.execution", "false");
+		mapredSiteConfig.setProperties(props);
+
+		// bootstrap actions to add jar
+		BootstrapActionConfig bootstrapActionConfig = new BootstrapActionConfig();
+		bootstrapActionConfig.setName("Upload ElasticSearch Jars");
+		bootstrapActionConfig.setScriptBootstrapAction(new ScriptBootstrapActionConfig()
+				.withPath("S3//bucket/config/uploadHiveJars.sh"));
+
+		// final request configuration to create cluster
+		RunJobFlowRequest request = new RunJobFlowRequest().withName("Cluster with Java SDK")
+				.withReleaseLabel("emr-5.8.0").withApplications(hive).withApplications(pig).withApplications(hue)
+				.withApplications(hadoop).withSteps(stepConfig, udfFunctions, restartHiveScript)
+				.withLogUri("s3n://ti-use1-bigdata-s3-user-scratch-space/kadianh/elasticmapreduce/")
+				.withServiceRole("EMR_DefaultRole").withJobFlowRole("EMR_EC2_DefaultRole")
+				.withInstances(new JobFlowInstancesConfig().withEc2SubnetId("subnet-b46c08ed")
+						.withEc2KeyName("ti-360-rs-s3").withEmrManagedMasterSecurityGroup("sg-38f17141")
+						.withEmrManagedSlaveSecurityGroup("sg-3ff17146").withInstanceGroups(Arrays.asList(master, core))
+						.withKeepJobFlowAliveWhenNoSteps(true).withServiceAccessSecurityGroup("sg-31f17148"))
+				.withConfigurations(Arrays.asList(hiveSiteConfig, mapredSiteConfig)).withBootstrapActions(bootstrapActionConfig)
+				.withScaleDownBehavior(ScaleDownBehavior.TERMINATE_AT_INSTANCE_HOUR).withEbsRootVolumeSize(10)
+				.withName(clusterName).withVisibleToAllUsers(true);
+
+		// request has been served, returning cluster id
+		RunJobFlowResult result = getEmrClient().runJobFlow(request);
+		if (isClusterStateIsWaiting(result.getJobFlowId())) {
+			LOG.info("[ cluster created successfully and is in the waiting state ]");
+			return result.getJobFlowId();
+		} else {
+			LOG.info("[ problem occured while creating cluster. Good luck next time!! ]");
+			throw new Exception("problem occured while creating cluster. Good luck next time!!");
+		}
+
+	}
+
+	/**
+	 * <p>
+	 * Terminate the cluster by providing cluster id
+	 * </p>
+	 * 
+	 * @param clusterId
+	 * @throws Exception
+	 */
+	public void terminateCluster(String clusterId) throws Exception {
+
+		LOG.info("[ terminating cluster with the id " + clusterId + " ]");
+		TerminateJobFlowsRequest terminate = new TerminateJobFlowsRequest().withJobFlowIds(Arrays.asList(clusterId));
+		getEmrClient().terminateJobFlows(terminate);
+		LOG.info("[ cluster terminated with the id  " + clusterId + " ]");
+
+	}
+
+	/**
+	 * <p>
+	 * Returns the public DNS for the clusterid provided
+	 * </p>
+	 * 
+	 * @param clusterId
+	 * @return
+	 * @throws Exception
+	 */
+	public String getMasterPublicDNSName(String clusterId) throws Exception {
+		DescribeClusterFunction fun = new DescribeClusterFunction(getEmrClient());
+		DescribeClusterResult res = fun.apply(new DescribeClusterRequest().withClusterId(clusterId));
+		return res.getCluster().getMasterPublicDnsName();
+	}
+
+	/**
+	 * <p>
+	 * create EMR client
+	 * </p>
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("deprecation")
+	private AmazonElasticMapReduceClient createEMRClient() throws Exception {
+
+		AWSCredentials credentials_profile = null;
+		credentials_profile = new DefaultAWSCredentialsProviderChain().getCredentials();
+
+		AmazonElasticMapReduceClient emr = new AmazonElasticMapReduceClient(credentials_profile);
+		Region euWest1 = Region.getRegion(Regions.US_EAST_1);
+		emr.setRegion(euWest1);
+		return emr;
+	}
+
+	/**
+	 * <p>
+	 * waits until the cluster comes to WAITING state , if any error occurs
+	 * during the process it returns false and an exception is thrown which
+	 * indicates an error has occurred while creating cluster
+	 * </p>
+	 * 
+	 * @param clusterId
+	 * @return
+	 * @throws Exception
+	 * 
+	 */
+
+	private boolean isClusterStateIsWaiting(String clusterId) throws Exception {
+
+		DescribeClusterFunction fun = null;
+		DescribeClusterResult res = null;
+		do {
+			fun = new DescribeClusterFunction(getEmrClient());
+			res = fun.apply(new DescribeClusterRequest().withClusterId(clusterId));
+			if (res.getCluster().getStatus().getState()
+					.equalsIgnoreCase(ClusterState.TERMINATED_WITH_ERRORS.toString()))
+				return false;
+
+			LOG.info("[ current state is " + res.getCluster().getStatus().getState().toString() + " ]");
+			LOG.info("[ Please be patient , we are working on it .]");
+
+			try {
+				TimeUnit.MINUTES.sleep(2);
+			} catch (InterruptedException e) {
+				LOG.warn("sleep interuppted ", e);
+			}
+
+		} while (!res.getCluster().getStatus().getState().equalsIgnoreCase(ClusterState.WAITING.toString()));
+
+		return true;
+	}
+
+}
