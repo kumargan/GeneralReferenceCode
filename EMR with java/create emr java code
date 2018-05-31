@@ -114,7 +114,7 @@ public class DynamicEMRClusterCreator {
 		Application hadoop = new Application().withName("hadoop");
 
 		// name node and data node configuration
-		InstanceGroupConfig master = new InstanceGroupConfig().withName("Master - 1")
+		InstanceGroupConfig master = new InstanceGroupConfig().withName("Master")
 				.withInstanceType(
 						InstanceType.M4Large//M4Large
 								.toString()).withInstanceRole(InstanceRoleType.MASTER)
@@ -123,7 +123,7 @@ public class DynamicEMRClusterCreator {
 						.withVolumesPerInstance(1)).withEbsOptimized(true))
 				.withInstanceCount(config.getClusterConfig().getMasterInstanceCount());
 
-		InstanceGroupConfig core = new InstanceGroupConfig().withName("Core - 2")
+		InstanceGroupConfig core = new InstanceGroupConfig().withName("Core")
 				.withInstanceType(
 						InstanceType.M4Large//M4Large//M4Large
 								.toString())
@@ -165,10 +165,10 @@ public class DynamicEMRClusterCreator {
 		RunJobFlowRequest request = new RunJobFlowRequest().withName("Cluster with Java SDK")
 				.withReleaseLabel("emr-5.8.0").withApplications(hive).withApplications(pig).withApplications(hue)
 				.withApplications(hadoop).withSteps(stepConfig, udfFunctions, restartHiveScript)
-				.withLogUri("s3n://ti-use1-bigdata-s3-user-scratch-space/kadianh/elasticmapreduce/")
+				.withLogUri("s3n://bucket/elasticmapreduce/")
 				.withServiceRole("EMR_DefaultRole").withJobFlowRole("EMR_EC2_DefaultRole")
 				.withInstances(new JobFlowInstancesConfig().withEc2SubnetId("subnet-b46c08ed")
-						.withEc2KeyName("ti-360-rs-s3").withEmrManagedMasterSecurityGroup("sg-38f17141")
+						.withEc2KeyName("tpem").withEmrManagedMasterSecurityGroup("sg-38f17141")
 						.withEmrManagedSlaveSecurityGroup("sg-3ff17146").withInstanceGroups(Arrays.asList(master, core))
 						.withKeepJobFlowAliveWhenNoSteps(true).withServiceAccessSecurityGroup("sg-31f17148"))
 				.withConfigurations(Arrays.asList(hiveSiteConfig, mapredSiteConfig)).withBootstrapActions(bootstrapActionConfig)
