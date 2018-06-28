@@ -1,0 +1,4 @@
+connect via multiple hosts :
+
+1. Add all the ssh keys to local agent and run the following 
+ssh -A -L 3306:localhost:3306 ec2-user@jumpbox1 -t ssh -A -L 3306:dest:3306 ec2-user@jumpbox2
