@@ -1,0 +1,34 @@
+
+
+
+
+scp google_test.jmx ubuntu@18.210.15.214:.
+
+
+
+
+1. ubuntu ami (master and slave): 
+	1.1 sudo apt-get update && sudo apt-get install default-jre -y && sudo apt-get install jmeter -y
+
+
+2. start jmeter server on slave : 
+	2.1  start the jmeter server manually : jmeter-server  
+	2.2. start server on system boot : 
+		2.2.1 create systemctl service : 
+			2.2.1.1 cd /etc/systemd/system
+			2.2.1.2 vi jmeter.service
+					[Unit]
+					Description=jmeter-server-deamon
+
+					[Service]
+					ExecStart=/usr/bin/jmeter-server
+					Restart=always
+					RestartSec=1
+
+					[Install]
+					WantedBy=multi-user.target
+			2.2.1.3 sudo systemctl enable jmeter.service
+			2.2.1.4 sudo systemctl start jmeter.service
+
+3. run a jmx file on server : 
+	3.1 jmeter -n -t google_test.jmx -R <ip1,ip2....>
