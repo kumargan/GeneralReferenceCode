@@ -1,0 +1,2 @@
+1. ssh into the instance using -X switch  : ssh -X ubuntu@x.x.x.x
+2. start xclock to verify. use jmeter
