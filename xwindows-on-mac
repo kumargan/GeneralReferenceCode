@@ -1,2 +1,14 @@
 1. ssh into the instance using -X switch  : ssh -X ubuntu@x.x.x.x
 2. start xclock to verify. use jmeter
+
+
+for amazon linux : 
+
+1.  vi /etc/ssh/sshd_config
+	sudo service sshd restart
+
+2. 	install xterm components 
+	yum install xorg-x11-xauth xterm
+
+3. 	ssh -X -A ec2-user@<public ip>
+	ssh -X ubuntu@<private ip>
