@@ -1,0 +1,7 @@
+profile remote jvm 
+1.	open tunnel to remote jvm. : 
+	ssh -p 22612 -A -L 9208:localhost:9208 ganeshkumar@54.254.xxx.xxx -t ssh -L 9208:localhost:9208 ec2-user@10.151.1.226
+
+2.	start the remote jvm with below mentioned params : 
+
+	java -Dcom.sun.management.jmxremote.authenticate=false  -Dcom.sun.management.jmxremote.port=9208 -Dcom.sun.management.jmxremote.rmi.port=9208 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1 -Dname=b2b-catalog-product -Xmx500M -Xms256M -jar indexer-0.0.1-SNAPSHOT.jar --server.port=8085 1>build.logs 2>>build.logs &
