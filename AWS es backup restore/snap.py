@@ -14,13 +14,13 @@ if __name__ == "__main__":
 
     client = ESConnection(
             region='us-east-1',
-            host='search-customer-insights-tvzve6vt3m4u3e7flmid5id7ui.us-east-1.es.amazonaws.com',
+            host='tvzve6vt3m4u3e7flmid5id7ui.us-east-1.es.amazonaws.com',
             aws_access_key_id='xxxxxxxxxx',
             aws_secret_access_key='xxxxxxxxxxxx',is_secure=False)
 
     print 'Registering Snapshot Repository'
     resp = client.make_request(method='PUT',
             path='/_snapshot/es-index-backups',
-            data='{"type": "s3","settings": { "bucket": "es-snap-shot-delete-by-2018-02-09","region": "us-east-1","role_arn": "arn:aws:iam::650xxxxxxxx:role/es-dump-keep-for-future-use"}}')
+            data='{"type": "s3","settings": { "bucket": "es-snap-shot-d9","region": "us-east-1","role_arn": "arn:aws:iam::650xxxxxxxx:role/es-dump-keep-for-future-use"}}')
     body = resp.read()
     print body
