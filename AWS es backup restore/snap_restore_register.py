@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     client = ESConnection(
             region='us-east-1',
-            host='vpc-customer-360-view-x4hbqf64s5jnssmwbnx5qcx3q4.us-east-1.es.amazonaws.com',
+            host='vpc-x4hbqf64s5jnssmwbnx5qcx3q4.us-east-1.es.amazonaws.com',
             aws_access_key_id='xxxx',
             aws_secret_access_key='xxxxxxxx',is_secure=False)
 
