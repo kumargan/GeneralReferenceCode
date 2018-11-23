@@ -96,7 +96,7 @@ public class DynamicEMRClusterCreator {
 						.newRunHiveScriptStepVersioned(
 								"S3//bucket/config/registerHiveUdfFunctions.hql",
 								"2.3.0")
-						.withJar("s3://us-east-1.elasticmapreduce/libs/script-runner/script-runner.jar"))
+						.withJar("s3://mapreduce/libs/script-runner/script-runner.jar"))
 				.withName("RegisterHiveUdfFunctions");
 
 		// hive restart script
@@ -104,7 +104,7 @@ public class DynamicEMRClusterCreator {
 				.withHadoopJarStep(stepFactory
 						.newScriptRunnerStep(
 								"S3//bucket/config/restartHiveScript.sh")
-						.withJar("s3://us-east-1.elasticmapreduce/libs/script-runner/script-runner.jar"))
+						.withJar("s3://cmapreduce/libs/script-runner/script-runner.jar"))
 				.withName("Restarting Hive server");
 
 		// applications requirements for cluster
