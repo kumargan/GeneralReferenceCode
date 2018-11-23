@@ -9,7 +9,7 @@ def lambda_handler(event, context):
     cluster_id = connection.run_job_flow(
     Name='360-dfppclicks-spark-ETL-load-parquet',
     ReleaseLabel='emr-5.9.0',
-    LogUri='s3n://aws-logs-650377115526-us-east-1/elasticmapreduce/',
+    LogUri='s3n://aws-logs-us-east-1/elasticmapreduce/',
     Instances={
         'InstanceGroups': [
             {
