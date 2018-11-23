@@ -2,26 +2,26 @@
 
 2. take snapshot
 
-	curl -XPUT 'https://search-tvzve6vt3m4u3e7flmid5id7ui.us-east-1.es.amazonaws.com/_snapshot/es-index-backups/2018-02-08'
+	curl -XPUT 'https://e7flmid5id7ui.us-east-1.es.amazonaws.com/_snapshot/es-index-backups/2018-02-08'
 	
 3. check the status of restore:
-	curl -XGET 'https://search-tvzve6vt3m4u3e7flmid5id7ui.us-east-1.es.amazonaws.com/_snapshot/es-index-backups/_all?pretty'
+	curl -XGET 'https://5id7ui.us-east-1.es.amazonaws.com/_snapshot/es-index-backups/_all?pretty'
 
 4. check all snapshots available : 
-	curl -XGET 'https://search-tvzve6vt3m4u3e7flmid5id7ui.us-east-1.es.amazonaws.com/_snapshot?pretty'	
+	curl -XGET 'https://flmid5id7ui.us-east-1.es.amazonaws.com/_snapshot?pretty'	
 	
 4. restore the backup :
-	curl -XPOST 'https://vpc-x4hbqf64s5jnssmwbnx5qcx3q4.us-east-1.es.amazonaws.com/_snapshot/es-index-backups/2018-02-08/_restore'
+	curl -XPOST 'https://wbnx5qcx3q4.us-east-1.es.amazonaws.com/_snapshot/es-index-backups/2018-02-08/_restore'
 	
 5. delete an index
-	curl -XDELETE 'https://vpc-x4hbqf64s5jnssmwbnx5qcx3q4.us-east-1.es.amazonaws.com/.kibana?pretty'
+	curl -XDELETE 'https://vpc-bnx5qcx3q4.us-east-1.es.amazonaws.com/.kibana?pretty'
 	
 6. close index - does not work below 6.x
-	curl -XDELETE 'https://vpc-x4hbqf64s5jnssmwbnx5qcx3q4.us-east-1.es.amazonaws.com/.kibana/_close?pretty'
+	curl -XDELETE 'https://vpc-wbnx5qcx3q4.us-east-1.es.amazonaws.com/.kibana/_close?pretty'
 	
 	
 7. delete all indexes and restore from snapshot
-	curl -XDELETE 'https://vpc-x4hbqf64s5jnssmwbnx5qcx3q4.us-east-1.es.amazonaws.com/_all?pretty' && curl -XPOST 'https://vpc-customer-360-view-x4hbqf64s5jnssmwbnx5qcx3q4.us-east-1.es.amazonaws.com/_snapshot/es-index-backups/2018-02-08/_restore'
+	curl -XDELETE 'https://vpc-mwbnx5qcx3q4.us-east-1.es.amazonaws.com/_all?pretty' && curl -XPOST 'https://vpc-jnssmwbnx5qcx3q4.us-east-1.es.amazonaws.com/_snapshot/es-index-backups/2018-02-08/_restore'
 
 8. 
-curl -XGET 'https://vpc-x4hbqf64s5jnssmwbnx5qcx3q4.us-east-1.es.amazonaws.com/_snapshot/es-index-backups/_all?pretty'
+curl -XGET 'https://vpc-bnx5qcx3q4.us-east-1.es.amazonaws.com/_snapshot/es-index-backups/_all?pretty'
