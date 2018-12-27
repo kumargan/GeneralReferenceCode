@@ -2,3 +2,15 @@ connect via multiple hosts :
 
 1. Add all the ssh keys to local agent and run the following 
 ssh -A -L 3306:localhost:3306 ec2-user@jumpbox1 -t ssh -A -L 3306:dest:3306 ec2-user@jumpbox2
+
+
+2. Zepplin on EMR ( https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-web-interfaces.html)
+
+  2.1 ssh -L 8890:localhost:8890  hadoop@ip.compute-1.amazonaws.com
+  2.2 localhost:8890
+
+3. Jupyterhub on emr ( https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-jupyterhub-connect.html )
+  3.1 ssh -L 9443:localhost:9443  hadoop@ec2-3-84-149-108.compute-1.amazonaws.com
+  3.2 localhost: 9443
+  3.3 login : jovyan/jupyter
+	
