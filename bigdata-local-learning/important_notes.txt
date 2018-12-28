@@ -1,0 +1,8 @@
+
+1. hints from : https://medium.com/@suci/running-pyspark-on-jupyter-notebook-with-docker-602b18ac4494
+
+2. build docker container from  : https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook
+	
+	docker build -t pyspark-notebook:latest .
+
+3. docker run -v /Users/ganesh/ganesh/projects/bigdata/test:/home/jovyan/ -ti --rm -p 8888:8888 pyspark-notebook
