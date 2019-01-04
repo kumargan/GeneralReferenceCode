@@ -13,4 +13,13 @@ ssh -A -L 3306:localhost:3306 ec2-user@jumpbox1 -t ssh -A -L 3306:dest:3306 ec2-
   3.1 ssh -L 9443:localhost:9443  hadoop@ec2-3-84-149-108.compute-1.amazonaws.com
   3.2 localhost: 9443
   3.3 login : jovyan/jupyter
+
+4. Download remote files via tunnels :
+
+	scp -o ProxyCommand="ssh -p 22612 -A -W %h:%p ganeshkumar@13.xxx.1x3.xx7" ec2-user@10.xx0.1.75:/home/ec2-user/test/check.log /Users/projects/
+
+5. Upload files to remote via tunnels : 
+
+	scp -o ProxyCommand="ssh -p 2xx12 -A -W %h:%p ganeshkumar@x3.xxx.xx3.1x7" "/Users/ganesh/uploaddocs.jar" ec2-user@10.1xx.1x.xx5:/home/ec2-user/test/
+
 	

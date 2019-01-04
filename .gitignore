@@ -1,1 +1,5 @@
 node_modules
+pipe_from_stdin/.classpath
+pipe_from_stdin/.project
+pipe_from_stdin/.settings/org.eclipse.jdt.core.prefs
+*.class
