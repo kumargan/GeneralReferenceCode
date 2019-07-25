@@ -1,0 +1,18 @@
+MAC
+
+1. print all file descriptors : sudo fs_usage
+
+2.print all file descriptors of a process : lsof -p 27564
+
+
+Definitions :
+A file descriptor is a low-level integer "handle" used to identify an opened file (or socket, or whatever) at the kernel level, in Linux and other Unix-like systems.
+0 - std input stream of process (read )
+1 - std output stream of process (write)
+2 - error stream of process (write )
+... there will be may read streams for reading respective jar's(dependencies) of the processes.
+... there will be pipe streams and other streams as well which are nother read or write
+
+Settings :
+//keep alive in http client
+httpClient.getHttpConnectionManager().getParams().setSoTimeout(60000);
