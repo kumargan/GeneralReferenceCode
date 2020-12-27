@@ -1,4 +1,5 @@
 var stompClient = null;
+const hashMap = new Object();
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -13,19 +14,28 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/greeting');
+    var socket = new SockJS('/ticks');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/greetings', function (greeting) {
-            showGreeting(greeting.body);
-        });
         
-        stompClient.subscribe('/user/queue/reply', function (greeting) {
-            showGreeting(greeting.body);
-        });
+//        stompClient.subscribe('/user/queue/reply', function (greeting) {
+//            showGreeting(greeting.body);
+//        });
     });
+}
+
+function subscribe(scrip){
+    var obj = stompClient.subscribe('/topic/'+scrip, function (greeting) {
+        showGreeting(greeting.body);
+    });
+    console.log("object value ",obj)
+    hashMap[scrip]=obj.id;
+}
+
+function unsubscribe(scrip){
+    stompClient.unsubscribe(hashMap[scrip]);
 }
 
 function disconnect() {
@@ -36,8 +46,9 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function sendName() {
+function sendName(scrip) {
     stompClient.send("/app/hello1", {}, JSON.stringify({'name': $("#name").val()}));
+	
 }
 
 function showGreeting(message) {
@@ -50,6 +61,15 @@ $(function () {
     });
     $( "#connect" ).click(function() { connect(); });
     $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#send" ).click(function() { sendName(); });
+    $( "#subscribe" ).click(function() { 
+    	var scrip = $('#name').val();
+    	console.log('subscribe ',scrip);	
+    	subscribe(scrip);
+    	});
+    $( "#unsubscribe" ).click(function() { 
+    	var scrip = $('#name').val();
+    	console.log('unsubscribe ',scrip);	
+    	unsubscribe(scrip); 
+    	});
 });
 

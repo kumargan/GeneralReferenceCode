@@ -30,8 +30,8 @@ import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
-import transact.beans.request.HelloMessage;
-import transact.beans.response.Greeting;
+import transact.beans.request.SubscriptionReq;
+import transact.beans.response.SubscriptionRes;
 
 
 @RunWith(SpringRunner.class)

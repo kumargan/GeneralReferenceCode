@@ -1,4 +1,4 @@
-1. sudo apt get update
+1. sudo apt-get update
 2. sudo apt-get install ubuntu-desktop vnc4server gnome-panel gnome-settings-daemon metacity gnome-terminal nautilus
 3. start vnc server and setup pwd : vncserver
 4. replace all contents in file by the following : .vnc/startup

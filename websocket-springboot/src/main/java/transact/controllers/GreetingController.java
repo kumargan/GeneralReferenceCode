@@ -1,28 +1,30 @@
 package transact.controllers;
 
+import javax.websocket.Session;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.util.HtmlUtils;
 
-import transact.beans.request.HelloMessage;
-import transact.beans.response.Greeting;
+import transact.beans.request.SubscriptionReq;
+import transact.beans.response.SubscriptionRes;
 
 @Controller
 public class GreetingController {
 
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    public Greeting greeting(HelloMessage message) throws Exception {
-        Thread.sleep(1000); // simulated delay
-        return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
+//    @MessageMapping("/chat")
+//    @SendTo("/topic/greetings")
+//    public SubscriptionRes greeting(SubscriptionReq message) throws Exception {
+//        Thread.sleep(1000); // simulated delay
+//        return new SubscriptionRes(new Integer[]);
+//    }
+    
+    @MessageMapping("/subscribe")
+    @SendToUser("/queue/reply")
+    public SubscriptionRes greetingNew(SubscriptionReq message,Session session) throws Exception {  
+        return new SubscriptionRes(true);
     }
     
-    @MessageMapping("/hello1")
-    @SendToUser("/queue/reply")
-    public Greeting greetingNew(HelloMessage message) throws Exception {
-        Thread.sleep(1000); // simulated delay
-        return new Greeting("my my Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
-    }
+    
 }

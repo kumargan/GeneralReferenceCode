@@ -5,7 +5,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import transact.beans.response.Greeting;
 
 @Component
 @EnableScheduling
@@ -19,8 +18,12 @@ public class TopicsComponent {
 		this.countComp = countComp;
 	}
 	
-	@Scheduled(fixedDelay = 2000L)
+	@Scheduled(fixedDelay = 1000L)
     public void forwardToTopic() {
-    	template.convertAndSend("/topic/greetings", new Greeting(countComp.connCount.toString()));
+	  
+	  for(int i=101;i<10000;i++) {
+    	template.convertAndSend("/topic/"+i, i);
+	  }
+      
     }
 }

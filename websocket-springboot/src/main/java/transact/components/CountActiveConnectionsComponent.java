@@ -1,32 +1,43 @@
 package transact.components;
 
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class CountActiveConnectionsComponent implements ApplicationListener{
-	AtomicInteger connCount = new AtomicInteger(0);
+  AtomicInteger connCount = new AtomicInteger(0);
 
-	@Override
-	public void onApplicationEvent(ApplicationEvent arg0) {
-		
-		if(arg0 instanceof SessionConnectEvent) {
-			System.out.println(" new connection ");
-			connCount.incrementAndGet();
-		}else if(arg0 instanceof SessionDisconnectEvent) {
-			System.out.println(" connection closed");
-			connCount.decrementAndGet();
-		}
-		
-	}
+
+  public AtomicInteger getConnCount() {
+    return connCount;
+  }
+
+
+  public void incConnCount() {  
+    connCount.incrementAndGet();
+    log.info(" new connection , connections {} ",connCount.get());
+  }
+
+  public void decConnCount() {  
+    connCount.decrementAndGet();
+    log.info(" connection closed , connections {}",connCount.get());
+  }
+
+
+  @Override
+  public void onApplicationEvent(ApplicationEvent arg0) {
+
+    if(arg0 instanceof SessionConnectEvent) 
+      incConnCount();
+    else if(arg0 instanceof SessionDisconnectEvent) 
+      decConnCount();
+
+
+  }
 }
