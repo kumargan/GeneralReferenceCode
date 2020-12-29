@@ -21,7 +21,7 @@ if [ $? -eq 0 ]; then
        -jar target/indexer-0.0.1-SNAPSHOT.jar --server.port=8085 1>>build.logs 2>>build.logs &
 	else
 		echo "starting server "
-		java -Xmx2000M -Xms256M -jar target/webskt-0.1.0.jar --server.port=8080 1>>build.logs 2>>build.logs &
+		java -Xmx2000M -Xms256M -jar target/stomp-java-client-1.0.jar 1>>build.logs 2>>build.logs &
 	fi
 	echo $! >> process.pid
 else
