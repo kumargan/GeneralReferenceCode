@@ -14,15 +14,15 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/ticks');
+    var socket = new SockJS('/feed/ticks');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
         
-//        stompClient.subscribe('/user/queue/reply', function (greeting) {
-//            showGreeting(greeting.body);
-//        });
+        stompClient.subscribe('/user/queue/reply', function (greeting) {
+            showGreeting(greeting.body);
+        });
     });
 }
 

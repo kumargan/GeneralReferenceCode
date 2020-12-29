@@ -18,10 +18,10 @@ public class TopicsComponent {
 		this.countComp = countComp;
 	}
 	
-	@Scheduled(fixedDelay = 1000L)
+	@Scheduled(fixedDelay = 2L)
     public void forwardToTopic() {
 	  
-	  for(int i=101;i<10000;i++) {
+	  for(int i=0;i<=10000;i++) {
     	template.convertAndSend("/topic/"+i, i);
 	  }
       

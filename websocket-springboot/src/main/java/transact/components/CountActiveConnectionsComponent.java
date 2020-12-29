@@ -6,11 +6,12 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.StompSubProtocolHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class CountActiveConnectionsComponent implements ApplicationListener{
+public class CountActiveConnectionsComponent {//implements ApplicationListener{
   AtomicInteger connCount = new AtomicInteger(0);
 
 
@@ -30,14 +31,13 @@ public class CountActiveConnectionsComponent implements ApplicationListener{
   }
 
 
-  @Override
+  //@Override
   public void onApplicationEvent(ApplicationEvent arg0) {
 
     if(arg0 instanceof SessionConnectEvent) 
       incConnCount();
     else if(arg0 instanceof SessionDisconnectEvent) 
       decConnCount();
-
-
+    
   }
 }
