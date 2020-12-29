@@ -25,12 +25,12 @@ public class StompEventListener {
   @Autowired
   CountActiveConnectionsComponent counter;
 
-    //@EventListener
+    @EventListener
     private void handleSessionConnected(SessionConnectEvent event) {
       counter.incConnCount();
     }
 
-    //@EventListener
+    @EventListener
     private void handleSessionDisconnect(SessionDisconnectEvent event) {
       counter.decConnCount();
     }
@@ -40,7 +40,7 @@ public class StompEventListener {
       
       //log.info(" subscription received {}",event.getMessage());
       StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage());
-      log.info(" subscription headers.getSessionId() {}",headers.getDestination());
+      //log.info(" subscription headers.getSessionId() {}",headers.getDestination());
       
       if(!headers.getDestination().trim().equals(CommonConstants.USER_QUEUE_REPLY)) {
         //write first packet to user

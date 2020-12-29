@@ -9,7 +9,7 @@ file="process.pid"
 	cp /dev/null process.pid
 
 rm -rf target
-mvn package > build.logs
+mvn -Dmaven.test.skip=true package > build.logs
 
 if [ $? -eq 0 ]; then
 	echo "packaging successful "

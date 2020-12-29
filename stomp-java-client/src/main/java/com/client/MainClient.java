@@ -31,8 +31,9 @@ public class MainClient {
 
   @PostConstruct
   public void main() throws Exception {
+    Long start=System.currentTimeMillis();
     Client client = null;
-    int noOfClients = 10;
+    int noOfClients = 20;
     List<Client> clients = new ArrayList<>();
         
     for(Integer j=0;j<noOfClients;j++){
@@ -45,6 +46,7 @@ public class MainClient {
       while(true) {
         for(String topic:clnt.list)
           log.info("client & topic : {}, count : {}",clnt.clientName+"-"+topic,clnt.map.get(topic));
+        log.info("time spent {} ",(System.currentTimeMillis()-start)/1000);
         Thread.sleep(10000);
       }
     }
