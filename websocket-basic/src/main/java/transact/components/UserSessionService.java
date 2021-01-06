@@ -4,11 +4,13 @@ import static transact.constants.CommonConstants.pmlIdsToSessionMap;
 import static transact.constants.CommonConstants.userSessionSessionAndPmlIdsMap;
 
 import javax.websocket.Session;
+import org.springframework.stereotype.Component;
 import transact.beans.SessionAndPmlIds;
 import transact.beans.UserSession;
 import transact.beans.enums.Type;
 import transact.beans.request.SubscriptionReq;
 
+@Component
 public class UserSessionService {
 
   public void handleUserMessage(Session session, SubscriptionReq message){
