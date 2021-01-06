@@ -49,6 +49,6 @@ public class UserSession implements Closeable {
 
   @Override
   public void close() throws IOException {
-    log.info("Object being destroyed for sessionId {} ", this.session.getId());
+    log.info("UserSession Object being destroyed for sessionId {} ", sessionId);
   }
 }

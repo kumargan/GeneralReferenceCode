@@ -1,5 +1,6 @@
 package transact.constants;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,6 +12,7 @@ public class CommonConstants {
   public static final String QUEUE_REPLY = "/queue/reply";
   public static final String USER_QUEUE_REPLY = "/user/queue/reply";
 
+  public static ObjectMapper objectMapper = new ObjectMapper();
 
 
   //Session and PML Ids
