@@ -35,7 +35,7 @@ public class UserSessionService {
   public void handleDisconnectEvent(Session session){
     UserSession userSession = new UserSession( session );
     userSessionSessionAndPmlIdsMap.get(userSession).getPmlIds().forEach( pmlId -> {
-      pmlIdsToSessionMap
+
     });
   }
 
