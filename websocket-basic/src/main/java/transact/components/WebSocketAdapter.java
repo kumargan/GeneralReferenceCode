@@ -9,14 +9,19 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import org.apache.logging.log4j.message.Message;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import transact.config.CustomSpringConfigurator;
 
 @Slf4j
 @ServerEndpoint(value = "/ticks", configurator = CustomSpringConfigurator.class)
 public class WebSocketAdapter {
 
+  @Autowired
+  CountActiveConnectionsComponent activeConnectionsComponent;
+
   @OnOpen
   public void onOpen(Session session) throws IOException {
+    activeConnectionsComponent.incConnCount();
     log.info(" opened {}",session);
   }
 
@@ -27,6 +32,8 @@ public class WebSocketAdapter {
 
   @OnClose
   public void onClose(Session session) throws IOException {
+    activeConnectionsComponent.decConnCount();
+
     log.info(" closed {}",session);
   }
 
