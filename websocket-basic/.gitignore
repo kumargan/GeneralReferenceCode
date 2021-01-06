@@ -3,5 +3,5 @@
 .project
 *.prefs
 build.logs
-.idea/
+**/.idea/
 *.iml

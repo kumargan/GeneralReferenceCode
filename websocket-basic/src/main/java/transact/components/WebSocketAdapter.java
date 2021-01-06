@@ -9,9 +9,10 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import org.apache.logging.log4j.message.Message;
 import lombok.extern.slf4j.Slf4j;
+import transact.config.CustomSpringConfigurator;
 
 @Slf4j
-@ServerEndpoint(value = "/ticks")
+@ServerEndpoint(value = "/ticks", configurator = CustomSpringConfigurator.class)
 public class WebSocketAdapter {
 
   @OnOpen
@@ -20,8 +21,8 @@ public class WebSocketAdapter {
   }
 
   @OnMessage
-  public void onMessage(Session session, Message message) throws IOException {
-    log.info(" message {}",message.getFormattedMessage());
+  public void onMessage(Session session, String message) throws IOException {
+    log.info(" message {}",message);
   }
 
   @OnClose

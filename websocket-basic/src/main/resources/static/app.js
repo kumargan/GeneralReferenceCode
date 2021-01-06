@@ -1,5 +1,5 @@
-
 const hashMap = new Object();
+var socket=null;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -14,11 +14,13 @@ function setConnected(connected) {
 }
 
 function connect() {
-	const socket = new WebSocket('ws://localhost:8080/ticks');
-	
+	socket = new WebSocket('ws://localhost:8080/ticks');
+	//const socket = new WebSocket(uri);
 	//Connection opened
 	socket.addEventListener('open', function (event) {
 	    socket.send('Hello Server!');
+	    setConnected(true);
+	    console.log('Connection open');
 	});
 
 	// Listen for messages
@@ -30,7 +32,7 @@ function connect() {
 
 
 function subscribe(scrip){
-    var obj = stompClient.subscribe('/topic/'+scrip, function (greeting) {
+    var obj = socket.subscribe('/topic/'+scrip, function (greeting) {
         showGreeting(greeting.body);
     });
     console.log("object value ",obj)
@@ -42,11 +44,12 @@ function unsubscribe(scrip){
 }
 
 function disconnect() {
-    if (stompClient !== null) {
-        stompClient.disconnect();
+    if (socket !== null) {
+        socket.close();
+        setConnected(false);
+        console.log("Disconnected");
     }
-    setConnected(false);
-    console.log("Disconnected");
+
 }
 
 function sendName(scrip) {
