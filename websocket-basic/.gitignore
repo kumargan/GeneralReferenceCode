@@ -3,3 +3,5 @@
 .project
 *.prefs
 build.logs
+.idea/
+*.iml
