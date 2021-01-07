@@ -1,27 +1,29 @@
 package transact.util;
 
-import static transact.constants.CommonConstants.objectMapper;
+import lombok.SneakyThrows;
+import transact.beans.response.SubscriptionRes;
+
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
-import lombok.SneakyThrows;
-import transact.beans.request.SubscriptionReq;
 
-public class MessageEncoder implements Encoder.Text<SubscriptionReq> {
+import static transact.constants.CommonConstants.objectMapper;
 
-  @SneakyThrows
-  @Override
-  public String encode(SubscriptionReq message) throws EncodeException {
-    return objectMapper.writeValueAsString( message );
-  }
+public class MessageEncoder implements Encoder.Text<SubscriptionRes> {
 
-  @Override
-  public void init(EndpointConfig endpointConfig) {
-    // Custom initialization logic
-  }
+    @SneakyThrows
+    @Override
+    public String encode(SubscriptionRes message) throws EncodeException {
+        return objectMapper.writeValueAsString(message);
+    }
 
-  @Override
-  public void destroy() {
-    // Close resources
-  }
+    @Override
+    public void init(EndpointConfig endpointConfig) {
+        // Custom initialization logic
+    }
+
+    @Override
+    public void destroy() {
+        // Close resources
+    }
 }
