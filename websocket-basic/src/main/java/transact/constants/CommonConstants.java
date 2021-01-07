@@ -16,14 +16,14 @@ public class CommonConstants {
 
 
   //Session and PML Ids
-  public static Map<UserSession, SessionAndPmlIds> userSessionSessionAndPmlIdsMap
+  public static volatile Map<UserSession, SessionAndPmlIds> userSessionSessionAndPmlIdsMap
       = new ConcurrentHashMap<>(10000);
 
   // PML Ids and session map
-  public static Map<Long, Set<UserSession>> pmlIdsToSessionMap
+  public static volatile Map<Long, Set<UserSession>> pmlIdsToSessionMap
       = new ConcurrentHashMap<>( 100000 );
 
   // Map to hold lock on a session. Hold lock whenever edit is done on map.
-  public static Map<UserSession, AtomicBoolean> sessionLockedMap
+  public static volatile Map<UserSession, AtomicBoolean> sessionLockedMap
       = new ConcurrentHashMap<>( 100000 );
 }

@@ -7,10 +7,12 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import javax.websocket.Session;
 import lombok.Data;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Slf4j
+@ToString
 public class UserSession implements Closeable {
 
   private static int QUEUE_SIZE = 10000;

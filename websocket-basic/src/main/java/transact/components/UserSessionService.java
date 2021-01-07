@@ -34,13 +34,15 @@ public class UserSessionService {
     pmlIdsToSessionMap.get( pmlId ).remove( session );
   }
 
-  public void handleDisconnectEvent(Session session){
-    UserSession userSession = new UserSession( session );
-    userSessionSessionAndPmlIdsMap.get(userSession).getPmlIds().forEach(
-        pmlId -> {
-          pmlIdsToSessionMap.get(pmlId).remove( userSession );
-    });
-    userSessionSessionAndPmlIdsMap.remove( userSession );
+  public void handleDisconnectEvent(Session session) {
+    UserSession userSession = new UserSession(session);
+    if (userSessionSessionAndPmlIdsMap.get(userSession) != null) {
+      userSessionSessionAndPmlIdsMap.get(userSession).getPmlIds().forEach(
+          pmlId -> {
+            pmlIdsToSessionMap.get(pmlId).remove(userSession);
+          });
+      userSessionSessionAndPmlIdsMap.remove(userSession);
+    }
   }
 
 
