@@ -37,6 +37,7 @@ public class WebSocketAdapter {
   public void onMessage(Session session, SubscriptionReq message) throws IOException {
     log.info(" SessionId: {}, received message: {}",session.getId(), message);
     userSessionService.handleUserMessage( session, message );
+    session.getAsyncRemote().sendText("Request received");
   }
 
   @OnClose
