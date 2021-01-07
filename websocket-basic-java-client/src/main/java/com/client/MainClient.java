@@ -47,7 +47,7 @@ public class MainClient {
       for(Client clnt:clients){  
         total = new BigInteger("0");
         for(Long topic:clnt.list)
-          total.add(clnt.map.get(topic));
+          total = total.add(clnt.map.get(topic));
         log.info("************************  client : {}, count : {} time spent {}",clnt.clientName,total,(System.currentTimeMillis()-start)/1000);    
       }
       Thread.sleep(10000);
