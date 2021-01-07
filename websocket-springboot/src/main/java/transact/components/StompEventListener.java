@@ -44,7 +44,7 @@ public class StompEventListener {
       
       if(!headers.getDestination().trim().equals(CommonConstants.USER_QUEUE_REPLY)) {
         //write first packet to user
-        template.convertAndSendToUser(headers.getSessionId(),CommonConstants.QUEUE_REPLY ," etf"+headers.getSessionId(), 
+        template.convertAndSendToUser(headers.getSessionId(),CommonConstants.QUEUE_REPLY ," etf "+headers.getSessionId(), 
             createHeaders(headers.getSessionId()));
       }
     }

@@ -20,7 +20,7 @@ public class GenericTask implements Runnable{
       while(true) {
         Thread.sleep(100);
         for(int i=start;i<end;i++) {
-          template.convertAndSend("/topic/"+i, "qerr");
+          template.convertAndSend("/topic/"+i, i);
           //log.info("writing {}",i);
         }
       }
