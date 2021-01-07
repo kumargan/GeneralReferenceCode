@@ -20,7 +20,7 @@ import static transact.constants.CommonConstants.pmlIdsToSessionMap;
 @EnableScheduling
 @Slf4j
 public class TopicsComponent {
-    private static final int threads = 21;
+    private static final int threads = 20;
     @Autowired
     CountActiveConnectionsComponent countComp;
     int total = 10000;

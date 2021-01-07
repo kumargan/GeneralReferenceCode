@@ -1,5 +1,6 @@
 package transact.components;
 
+import java.util.Set;
 import org.springframework.stereotype.Component;
 import transact.beans.SessionAndPmlIds;
 import transact.beans.UserSession;
@@ -46,5 +47,12 @@ public class UserSessionService {
         }
     }
 
+    public Set<UserSession> getAllSession(){
+        return userSessionSessionAndPmlIdsMap.keySet();
+    }
+
+    public void addMessageToSession(UserSession session, String message){
+        session.getMessageQueue().add( message );
+    }
 
 }
