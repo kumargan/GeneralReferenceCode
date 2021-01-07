@@ -2,6 +2,7 @@ package com.client;
 
 import com.client.enums.Type;
 import com.client.request.SubscriptionReq;
+import com.client.response.SubscriptionRes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -23,7 +24,7 @@ import java.util.concurrent.ExecutionException;
 public class Client {
     WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
     Random random = new Random();
-    Map<String, BigInteger> map = new ConcurrentHashMap<>();
+    Map<Long, BigInteger> map = new ConcurrentHashMap<>();
     List<String> list = new ArrayList<>();
     String clientName = null;
 
@@ -39,12 +40,12 @@ public class Client {
     }
 
     public void subscribeTopic(WebSocketSession webSocketSession, Long topic) throws ExecutionException, InterruptedException, IOException {
+        map.put(topic, new BigInteger("0"));
         ObjectMapper objectMapper = new ObjectMapper();
         SubscriptionReq subscriptionReq = new SubscriptionReq();
         subscriptionReq.setPmlId(topic);
         subscriptionReq.setType(Type.S);
         webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(subscriptionReq)));
-
     }
 
 
@@ -83,7 +84,10 @@ public class Client {
 
         @Override
         public void handleMessage(WebSocketSession webSocketSession, WebSocketMessage<?> webSocketMessage) throws Exception {
-            log.info("Receiving message for session {}", webSocketSession.getId());
+            ObjectMapper objectMapper = new ObjectMapper();
+            SubscriptionRes subscriptionRes = objectMapper.readValue(webSocketMessage.getPayload().toString(), SubscriptionRes.class);
+            map.put(Long.valueOf(subscriptionRes.getStatus()), map.get(Long.valueOf(subscriptionRes.getStatus())).add(BigInteger.ONE));
+
         }
 
         @Override
