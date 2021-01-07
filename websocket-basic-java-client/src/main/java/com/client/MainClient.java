@@ -35,22 +35,24 @@ public class MainClient {
     Client client = null;
     int noOfClients = 20;
     List<Client> clients = new ArrayList<>();
-        
+
     for(Integer j=0;j<noOfClients;j++){
       client = new Client(j.toString());
       clients.add(client);
       client.start();
     }
 
-    for(Client clnt:clients){
-      while(true) {
+    BigInteger total = null;
+    while(true) {   
+      for(Client clnt:clients){  
+        total = new BigInteger("0");
         for(Long topic:clnt.list)
-          log.info("client & topic : {}, count : {}",clnt.clientName+"-"+topic,clnt.map.get(topic));
-        log.info("time spent {} ",(System.currentTimeMillis()-start)/1000);
-        Thread.sleep(10000);
+          total.add(clnt.map.get(topic));
+        log.info("************************  client : {}, count : {} time spent {}",clnt.clientName,total,(System.currentTimeMillis()-start)/1000);    
       }
+      Thread.sleep(10000);
     }
-    
+
   }
 
 }

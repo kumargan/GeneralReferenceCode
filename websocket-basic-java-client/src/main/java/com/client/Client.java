@@ -35,7 +35,7 @@ public class Client {
     public ListenableFuture<WebSocketSession> connect() {
         WebSocketClient webSocketClient = new StandardWebSocketClient();
 
-        String url = "ws://localhost:8080/ticks";
+        String url = "ws://feedmux-env-1.eba-pmidvhqn.us-east-1.elasticbeanstalk.com/ticks";
         return webSocketClient.doHandshake(new MyHandler(), url, headers);
     }
 
@@ -62,7 +62,7 @@ public class Client {
             log.info("Subscribing to pml id using session " + webSocketSession);
 
             //subscribe to 20 sessions
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 20; i++) {
                 Long topic = new Long(random.nextInt(10000));
                 list.add(topic);
                 this.subscribeTopic(webSocketSession, topic);
