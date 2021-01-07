@@ -10,8 +10,6 @@ import transact.executor.ExecutorServiceUtil;
 import transact.executor.PublishTask;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 
@@ -19,8 +17,7 @@ import static transact.constants.CommonConstants.userSessionSessionAndPmlIdsMap;
 
 @Slf4j
 @Component
-public class PublisherComponent implements Runnable { //when does this thread stop which will try to pull and publish to sessions
-    //it will run as a thread / cron every second infinite loop
+public class PublisherComponent implements Runnable {
     Thread thread;
     @Autowired
     ExecutorServiceUtil executorServiceUtil;
@@ -40,25 +37,31 @@ public class PublisherComponent implements Runnable { //when does this thread st
                     try {
                         if (userSession.getSession().isOpen() && !userSession.getMessageQueue().isEmpty()) {
                             int currentQueueSize = userSession.getMessageQueue().size();
-                            List<String> subscriptionRes = new ArrayList<>();
+                            //List<String> subscriptionRes = new ArrayList<>();
                             BlockingDeque<String> blockingQueue = userSession.getMessageQueue();
                             while (currentQueueSize != 0) {
-                                log.info("publishing {} size data", currentQueueSize);
-                                subscriptionRes.add(blockingQueue.poll());
+                                SubscriptionRes subscriptionResponse = new SubscriptionRes();
+                                subscriptionResponse.setStatus(blockingQueue.poll());
+                                userSession.getSession().getAsyncRemote().sendObject(subscriptionResponse);
                                 currentQueueSize--;
                             }
-                            if (!subscriptionRes.isEmpty()) {
-                                log.info("Publish message {}", subscriptionRes);
+                           /* if (!subscriptionRes.isEmpty()) {
                                 //user's queue over send messages asynchronously
                                 SubscriptionRes subscriptionRes1 = new SubscriptionRes();
                                 subscriptionRes1.setStatus(subscriptionRes);
-                                userSession.getSession().getBasicRemote().sendObject(subscriptionRes1);
-                            }
+
+                            }*/
                         }
                     } catch (Exception e) {
                         //TODO: we need to put in error queue
+                        log.error("Exception while processing the session {} due to {} ", userSession.getSessionId(), e);
                     }
                 }
+            }
+            try {
+                Thread.sleep(0);
+            } catch (Exception e) {
+                log.error("Error while making thread sleep in the publisher {}", e.getMessage());
             }
         }
 

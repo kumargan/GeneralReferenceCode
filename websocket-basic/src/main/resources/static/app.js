@@ -35,7 +35,6 @@ console.log(scrip);
     });
   // Listen for messages
   	socket.addEventListener('message', function (event) {
-  	    console.log('Message from server ', event.data);
   	     //create a JSON object
               var jsonObject = JSON.parse(event.data);
               var status = jsonObject.status;
@@ -45,7 +44,11 @@ console.log(scrip);
 }
 
 function unsubscribe(scrip){
-    stompClient.unsubscribe(hashMap[scrip]);
+  console.log(scrip);
+      var data = JSON.stringify({ "pmlId": scrip, "type":'U' });
+      var obj = socket.send(data, function () {
+           console.log("Data sent",data);
+      });
 }
 
 function disconnect() {

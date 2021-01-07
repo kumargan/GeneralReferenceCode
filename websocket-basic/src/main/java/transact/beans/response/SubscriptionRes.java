@@ -10,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubscriptionRes {
-    private List<String> status;
+    private String  status;
 }
 
