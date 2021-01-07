@@ -52,7 +52,7 @@ public class TopicsComponent {
             long l = integer.get();
             for (long i = l * 500 + 1; i <= (l + 1) * 500; i++) {
                 for (UserSession userSession : pmlIdsToSessionMap.get(i)) {
-                    userSession.getMessageQueue().add("message_" + i);
+                    userSession.getMessageQueue().add(String.valueOf(i));
                 }
 
             }
