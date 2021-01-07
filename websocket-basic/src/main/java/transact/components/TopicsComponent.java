@@ -53,7 +53,7 @@ public class TopicsComponent {
                 for (long i = l * 500 + 1; i <= (l + 1) * 500; i++) {
                     for (UserSession userSession : pmlIdsToSessionMap.get(i)) {
                         try {
-                            userSession.getMessageQueue().offer(String.valueOf(i));
+                            userSession.getMessageQueue().add(String.valueOf(i));
                         }catch (IllegalStateException e){
                             log.error("Couldn't add message for pmlId {} on queue. Queue Full", i);
                         }
