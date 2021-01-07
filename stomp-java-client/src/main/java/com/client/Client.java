@@ -46,7 +46,7 @@ public class Client {
     WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
 
     String url = "ws://{host}:{port}/feed/ticks";
-    return stompClient.connect(url, headers, new MyHandler(), "feedmux-env-1.eba-pmidvhqn.us-east-1.elasticbeanstalk.com", 80);
+    return stompClient.connect(url, headers, new MyHandler(), "feedmux-env.eba-pmidvhqn.us-east-1.elasticbeanstalk.com", 80);
   }
 
   public void subscribeTopic(StompSession stompSession, String topic) throws ExecutionException, InterruptedException {
