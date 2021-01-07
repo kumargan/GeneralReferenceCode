@@ -1,9 +1,10 @@
-package transact.beans.request;
+package com.client.request;
 
+import com.client.enums.Type;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import transact.beans.enums.Type;
+
 
 @Data
 @NoArgsConstructor
