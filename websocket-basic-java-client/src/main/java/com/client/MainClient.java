@@ -44,7 +44,7 @@ public class MainClient {
 
     for(Client clnt:clients){
       while(true) {
-        for(String topic:clnt.list)
+        for(Long topic:clnt.list)
           log.info("client & topic : {}, count : {}",clnt.clientName+"-"+topic,clnt.map.get(topic));
         log.info("time spent {} ",(System.currentTimeMillis()-start)/1000);
         Thread.sleep(10000);

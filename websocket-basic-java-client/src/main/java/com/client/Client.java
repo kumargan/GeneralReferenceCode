@@ -25,7 +25,7 @@ public class Client {
     WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
     Random random = new Random();
     Map<Long, BigInteger> map = new ConcurrentHashMap<>();
-    List<String> list = new ArrayList<>();
+    List<Long> list = new ArrayList<>();
     String clientName = null;
 
     public Client(String name) {
@@ -62,9 +62,11 @@ public class Client {
             log.info("Subscribing to pml id using session " + webSocketSession);
 
             //subscribe to 20 sessions
-            for (int i = 0; i < 20; i++)
-                this.subscribeTopic(webSocketSession, new Long(random.nextInt(10000)));
-
+            for (int i = 0; i < 100; i++) {
+                Long topic = new Long(random.nextInt(10000));
+                list.add(topic);
+                this.subscribeTopic(webSocketSession, topic);
+            }
         } catch (Exception e) {
             log.error(" some error {}", e.getMessage());
         }

@@ -1,5 +1,12 @@
 package transact.components;
 
+import static transact.constants.CommonConstants.pmlIdsToSessionMap;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -7,14 +14,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import transact.beans.UserSession;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-
-import static transact.constants.CommonConstants.pmlIdsToSessionMap;
 
 @Component
 @EnableScheduling
@@ -49,15 +48,20 @@ public class TopicsComponent {
 
     private void addMessageToTopics(AtomicLong integer) {
         while (true) {
-            long l = integer.get();
-            for (long i = l * 500 + 1; i <= (l + 1) * 500; i++) {
-                for (UserSession userSession : pmlIdsToSessionMap.get(i)) {
-                    userSession.getMessageQueue().add(String.valueOf(i));
+            try {
+                long l = integer.get();
+                for (long i = l * 500 + 1; i <= (l + 1) * 500; i++) {
+                    for (UserSession userSession : pmlIdsToSessionMap.get(i)) {
+                        try {
+                            userSession.getMessageQueue().offer(String.valueOf(i));
+                        }catch (IllegalStateException e){
+                            log.error("Couldn't add message for pmlId {} on queue. Queue Full", i);
+                        }
+                    }
+
                 }
 
-            }
-            try {
-                TimeUnit.MILLISECONDS.sleep(100);
+                TimeUnit.MILLISECONDS.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
