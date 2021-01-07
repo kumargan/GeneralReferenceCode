@@ -18,25 +18,30 @@ function connect() {
 	//const socket = new WebSocket(uri);
 	//Connection opened
 	socket.addEventListener('open', function (event) {
-	    socket.send('Hello Server!');
 	    setConnected(true);
 	    console.log('Connection open');
 	});
-
-	// Listen for messages
-	socket.addEventListener('message', function (event) {
-	    console.log('Message from server ', event.data);
-	});
-
 }
 
 
 function subscribe(scrip){
-    var obj = socket.subscribe('/topic/'+scrip, function (greeting) {
-        showGreeting(greeting.body);
+if(socket==null){
+connect();
+}
+console.log(scrip);
+    var data = JSON.stringify({ "pmlId": scrip, "type":'S' });
+    var obj = socket.send(data, function () {
+         console.log("Data sent",data);
     });
-    console.log("object value ",obj)
-    hashMap[scrip]=obj.id;
+  // Listen for messages
+  	socket.addEventListener('message', function (event) {
+  	    console.log('Message from server ', event.data);
+  	     //create a JSON object
+              var jsonObject = JSON.parse(event.data);
+              var status = jsonObject.status;
+            showGreeting(status);
+  });
+
 }
 
 function unsubscribe(scrip){
