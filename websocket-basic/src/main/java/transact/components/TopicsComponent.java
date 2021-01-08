@@ -55,7 +55,7 @@ public class TopicsComponent {
                         try {
                             userSession.getMessageQueue().add(String.valueOf(i));
                         }catch (IllegalStateException e){
-                            log.error("Couldn't add message for pmlId {} on queue. Queue Full", i);
+                            //log.error("Couldn't add message for pmlId {} on queue. Queue Full", i);
                         }
                     }
 

@@ -3,7 +3,9 @@ package transact.constants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import transact.beans.SessionAndPmlIds;
 import transact.beans.UserSession;
@@ -23,7 +25,7 @@ public class CommonConstants {
   public static volatile Map<Long, Set<UserSession>> pmlIdsToSessionMap
       = new ConcurrentHashMap<>( 100000 );
 
-  // Map to hold lock on a session. Hold lock whenever edit is done on map.
-  public static volatile Map<UserSession, AtomicBoolean> sessionLockedMap
-      = new ConcurrentHashMap<>( 100000 );
+  // Set to store inactive sessions
+  public static volatile BlockingQueue<UserSession> inactiveSessionsSet
+      = new LinkedBlockingQueue<>( 100000 );
 }
