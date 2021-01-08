@@ -30,7 +30,4 @@ public class CommonConstants {
     // Map to hold lock on a session. Hold lock whenever edit is done on map.
     public static volatile Map<UserSession, AtomicBoolean> sessionLockedMap
             = new ConcurrentHashMap<>(100000);
-    // Set to store inactive sessions
-    public static volatile BlockingQueue<UserSession> inactiveSessionsSet
-            = new LinkedBlockingQueue<>(100000);
 }

@@ -63,7 +63,7 @@ public class Client {
 
             //subscribe to 20 sessions
             for (int i = 0; i < 20; i++) {
-                Long topic = new Long(random.nextInt(10000));
+                Long topic = new Long(random.nextInt(9999)+1L);
                 list.add(topic);
                 this.subscribeTopic(webSocketSession, topic);
             }

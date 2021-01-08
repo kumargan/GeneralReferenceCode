@@ -30,9 +30,7 @@ public class PublishTask implements Callable<Boolean> {
                 currentQueueSize--;
             }
         } catch (Exception e) {
-            //TODO: we need to put in error queue
             log.error("Exception while processing the session {} due to {} ", userSession.getSessionId(), e.getMessage());
-            return Boolean.FALSE;
         }
         return Boolean.TRUE;
     }
