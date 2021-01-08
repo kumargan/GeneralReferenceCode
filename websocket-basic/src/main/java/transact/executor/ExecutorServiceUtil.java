@@ -29,13 +29,13 @@ public class ExecutorServiceUtil {
                 rejectedExecutionHandler);
     }
 
-    public synchronized boolean checkAndSubmit(PublishTask publishTask) {
+    public synchronized Future<Boolean> checkAndSubmit(PublishTask publishTask) {
 
+        Future<Boolean> future = null;
         if (threadPoolExecutor.getQueue().size() < queueSize) {
-            threadPoolExecutor.submit(publishTask);
-            return true;
+            future = threadPoolExecutor.submit(publishTask);
         }
-        return false;
+        return future;
     }
 
     public void stopExecutors() {

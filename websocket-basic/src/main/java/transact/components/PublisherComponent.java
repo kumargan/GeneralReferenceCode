@@ -9,7 +9,10 @@ import transact.executor.ExecutorServiceUtil;
 import transact.executor.PublishTask;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import static transact.constants.CommonConstants.userSessionSessionAndPmlIdsMap;
 
@@ -29,33 +32,38 @@ public class PublisherComponent implements Runnable {
 
     public void run() {
         while (true) {
+            List<Future<Boolean>> boolFutureListPub = new ArrayList<>();
             if (!CollectionUtils.isEmpty(userSessionSessionAndPmlIdsMap)) { //iterate till some active sessions available
+
                 Set<UserSession> userSessionList = userSessionSessionAndPmlIdsMap.keySet();
                 for (UserSession userSession : userSessionList) { //iterate over each active session where each have a queue of messages to be published
                     if (userSession.getSession().isOpen() && !userSession.getMessageQueue().isEmpty()) {
-                        publishToUserSession(userSession);
+                        boolFutureListPub.add(publishToUserSession(userSession));
                     }
                 }
-            }
-            try {
-                Thread.sleep(0);
-            } catch (Exception e) {
-                log.error("Error while making thread sleep in the publisher {}", e.getMessage());
+                for (Future<Boolean> future : boolFutureListPub) {
+                    try {
+                        future.get();
+                    } catch (Exception e) {
+                        log.error("Exception while fetching the future from the list while packets.", e);
+                    }
+                }
             }
         }
     }
 
-    private void publishToUserSession(UserSession userSession) {
-        boolean publishSubmit = executorServiceUtil.checkAndSubmit(new PublishTask(userSession));
-        while (!publishSubmit) {
+    private Future<Boolean> publishToUserSession(UserSession userSession) {
+        Future<Boolean> publishSubmit = executorServiceUtil.checkAndSubmit(new PublishTask(userSession));
+        while (publishSubmit == null) {
             try {
-                Thread.sleep(3);
+                Thread.sleep(5);
             } catch (Exception e) {
                 log.error("Exception while sleeping the thread", e);
             }
-            log.info("queue is full trying again");
             publishSubmit = executorServiceUtil.checkAndSubmit(new PublishTask(userSession));
+            log.info("queue is full trying again");
         }
+        return publishSubmit;
     }
 
     public Thread getT() {

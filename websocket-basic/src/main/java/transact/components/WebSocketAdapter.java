@@ -46,5 +46,8 @@ public class WebSocketAdapter {
     @OnError
     public void onError(Session session, Throwable throwable) {
         log.info(" session {}, error {}", session, throwable);
+        if (!session.isOpen()) {
+            userSessionService.handleDisconnectEvent(session);
+        }
     }
 }
