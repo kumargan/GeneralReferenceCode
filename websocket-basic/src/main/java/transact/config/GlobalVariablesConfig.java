@@ -12,7 +12,7 @@ public class GlobalVariablesConfig {
   @PostConstruct
   public void initializePmlIdsSet(){
 
-    for (long i =1L; i<=10000L; i++){
+    for (long i =0L; i<=10000L; i++){
       pmlIdsToSessionMap.put( i, ConcurrentHashMap.newKeySet( 300 ));
     }
 
