@@ -55,6 +55,7 @@ function showSubscriptionData(map){
                        + "PML ID" + "</td>" +
                        "<td>" + "Message Count" +
                         "</td></tr>";
+                        console.log(map);
    for (let [key, value] of map.entries()) {
       mapStr = mapStr.concat("<tr><td>"
       + key + "</td>" +
@@ -66,11 +67,15 @@ function showSubscriptionData(map){
    //$("#greetings").replaceAll(mapStr);
 }
 function unsubscribe(scrip){
-  console.log(scrip);
       var data = JSON.stringify({ "pmlId": scrip, "type":'U' });
       var obj = socket.send(data, function () {
            console.log("Data sent",data);
       });
+
+      if(pmlIdMap.has(scrip)){
+           pmlIdMap.delete(scrip);
+           showSubscriptionData(pmlIdMap);
+      }
 }
 
 function disconnect() {
