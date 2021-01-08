@@ -6,7 +6,9 @@ import transact.beans.UserSession;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CommonConstants {
@@ -28,4 +30,7 @@ public class CommonConstants {
     // Map to hold lock on a session. Hold lock whenever edit is done on map.
     public static volatile Map<UserSession, AtomicBoolean> sessionLockedMap
             = new ConcurrentHashMap<>(100000);
+    // Set to store inactive sessions
+    public static volatile BlockingQueue<UserSession> inactiveSessionsSet
+            = new LinkedBlockingQueue<>(100000);
 }

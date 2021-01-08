@@ -9,7 +9,7 @@ public class SessionAndPmlIds {
 
   private UserSession userSession;
 
-  private Set<Long> pmlIds = ConcurrentHashMap.newKeySet( 300 );
+  private volatile Set<Long> pmlIds = ConcurrentHashMap.newKeySet( 300 );
 
   public SessionAndPmlIds( UserSession userSession){
     this.userSession = userSession;
