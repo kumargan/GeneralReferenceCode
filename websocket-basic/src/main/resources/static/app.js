@@ -1,6 +1,6 @@
 const hashMap = new Object();
 var socket=null;
-
+let pmlIdMap = new Map();
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
@@ -14,7 +14,7 @@ function setConnected(connected) {
 }
 
 function connect() {
-	socket = new WebSocket('ws://localhost:8080/ticks');
+	socket = new WebSocket('ws://'+ document.location.host + '/ticks');
 	//const socket = new WebSocket(uri);
 	//Connection opened
 	socket.addEventListener('open', function (event) {
@@ -38,11 +38,33 @@ console.log(scrip);
   	     //create a JSON object
               var jsonObject = JSON.parse(event.data);
               var status = jsonObject.status;
-            showGreeting(status);
+              if(pmlIdMap.has(status)){
+                 pmlIdMap.set(status, pmlIdMap.get(status)+1);
+              }
+              else{
+                 pmlIdMap.set(status, 1);
+              }
+              showSubscriptionData(pmlIdMap);
+            //showGreeting(status);
   });
 
 }
 
+function showSubscriptionData(map){
+   var mapStr = "<tr><td>"
+                       + "PML ID" + "</td>" +
+                       "<td>" + "Message Count" +
+                        "</td></tr>";
+   for (let [key, value] of map.entries()) {
+      mapStr = mapStr.concat("<tr><td>"
+      + key + "</td>" +
+      "<td>" + value +
+       "</td></tr>");
+   }
+   //console.log(mapStr);
+   greetings.innerHTML = mapStr;
+   //$("#greetings").replaceAll(mapStr);
+}
 function unsubscribe(scrip){
   console.log(scrip);
       var data = JSON.stringify({ "pmlId": scrip, "type":'U' });
@@ -56,6 +78,7 @@ function disconnect() {
         socket.close();
         setConnected(false);
         console.log("Disconnected");
+        pmlIdMap = new Map();
     }
 
 }
@@ -77,12 +100,12 @@ $(function () {
     $( "#disconnect" ).click(function() { disconnect(); });
     $( "#subscribe" ).click(function() { 
     	var scrip = $('#name').val();
-    	console.log('subscribe ',scrip);	
+    	console.log('subscribe ',scrip);
     	subscribe(scrip);
     	});
     $( "#unsubscribe" ).click(function() { 
     	var scrip = $('#name').val();
-    	console.log('unsubscribe ',scrip);	
+    	console.log('unsubscribe ',scrip);
     	unsubscribe(scrip); 
     	});
 });
