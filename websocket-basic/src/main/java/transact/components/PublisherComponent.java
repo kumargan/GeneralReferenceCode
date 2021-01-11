@@ -65,8 +65,4 @@ public class PublisherComponent implements Runnable {
         }
         return publishSubmit;
     }
-
-    public Thread getT() {
-        return thread;
-    }
 }
