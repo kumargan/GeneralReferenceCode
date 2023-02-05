@@ -22,4 +22,21 @@ ssh -A -L 3306:localhost:3306 ec2-user@jumpbox1 -t ssh -A -L 3306:dest:3306 ec2-
 
 	scp -o ProxyCommand="ssh -p 2xx12 -A -W %h:%p ganeshkumar@x3.xxx.xx3.1x7" "/Users/ganesh/uploaddocs.jar" ec2-user@10.1xx.1x.xx5:/home/ec2-user/test/
 
-	
+6. upload files to remote via multiple hosts : 
+	command : scp -o ProxyCommand="ssh -A -W %h:%p dev-server" "/Users/ganesh/git repo/app/target/app.jar" ubuntu@10.7.32.127:/home/ubuntu/app/app.jar
+	SSH confic file (~/.ssh/config) : 
+		Host dev-server
+ 		 Hostname 10.7.32.127
+ 		 User ubuntu
+ 		 ProxyCommand ssh -q -W %h:%p equity-bastion
+
+		Host equity-bastion
+ 		 Hostname <public ip of jumpbox>
+ 		 Port 22
+ 		 User ganesh1.kumar
+		
+		Host dev-eks-wokstation
+ 		 Hostname 10.7.36.151
+ 		 User ganesh1.kumar
+ 		 ProxyCommand ssh -q -W %h:%p equity-bastion 
+		
