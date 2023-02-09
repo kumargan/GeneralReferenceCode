@@ -1,0 +1,14 @@
+
+##### Add CORS to springboot, although it should not be required as loadbalancers do have these filters. 
+
+@RestController
+
+
+@CrossOrigin(allowedHeaders = { "Origin", "Accept", " Content-Type", "Access-Control-Request-Method",
+		"Access-Control-Request-Headers", "x-requested-with" }, methods = { RequestMethod.GET, RequestMethod.POST,
+				RequestMethod.OPTIONS,
+				RequestMethod.HEAD }, origins = "*", exposedHeaders = { "GET", "POST", "OPTIONS", "HEAD" })
+@RequestMapping(value = "/health")
+@Api(value = "customerInsights", description = "operations on customerInsights")
+public class SomeController {
+}
