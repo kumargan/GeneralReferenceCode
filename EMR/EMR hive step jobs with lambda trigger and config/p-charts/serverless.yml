@@ -1,0 +1,71 @@
+service: holdings-EMR-step-job
+provider:
+  name: aws
+  runtime: python2.7
+  region: ap-south-1
+  stage: "${opt:stage}"
+  vpc:
+    securityGroupIds:
+      - ${self:custom.environment.lambda_sg}
+    subnetIds:
+      - ${self:custom.environment.lambda_subnet_1}
+      - ${self:custom.environment.lambda_subnet_2}
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "ec2:CreateNetworkInterface"
+        - "ec2:DescribeNetworkInterfaces"
+        - "ec2:DetachNetworkInterface"
+        - "ec2:DeleteNetworkInterface"
+        - "ec2:Describe*"
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "s3:List*"
+        - "s3:Get*"
+        - "s3:Put*"
+      Resource:
+        - "arn:aws:s3:::${self:custom.environment.env}-eq-file-exchange/bullfinch-output/"
+        - "arn:aws:s3:::${self:custom.environment.env}-eq-file-exchange/bullfinch-output/*"
+        - "arn:aws:s3:::holdings-poc/"
+        - "arn:aws:s3:::holdings-poc/*"
+        
+    - Effect: "Allow"
+      Action: 
+        - "elasticmapreduce:*"
+      Resource:
+        - "*"
+        
+    - Effect: "Allow"
+      Action: 
+        - "iam:GetRole"
+        - "iam:PassRole"
+      Resource:
+        - "arn:aws:iam::762730909359:role/EMR*"
+
+
+
+#package:
+#  artifact: target/holdings_EMR_step_job-stg
+
+custom:
+  environment: ${file(env.yml):${self:provider.stage}}
+
+functions:
+  equity:
+    handler: resources/submit-emr.lambda_handler
+    timeout: 900
+    memorySize: 3000
+    environment:
+      SPRING_PROFILES_ACTIVE: ${self:provider.stage}
+      ENV: ${self:custom.environment.env}
+    events:
+     - s3:
+          bucket: 'stg-eq-file-exchange'
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: bullfinch-output/
+          existing: true
+
+      

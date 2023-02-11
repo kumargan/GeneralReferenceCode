@@ -1,0 +1,33 @@
+def agentLabel
+if (BRANCH_NAME == "dev") {
+    agentLabel = "dev-equity"
+}
+else if (BRANCH_NAME == "stage") {
+    agentLabel = "stg-equity"
+}
+else if (BRANCH_NAME == "master") {
+    agentLabel = "prod-equity"
+}
+
+pipeline {
+    agent { label agentLabel }
+    options {
+    	skipDefaultCheckout()
+	disableConcurrentBuilds()
+    }
+
+    triggers{
+      githubPush()
+    }
+
+    stages {
+      stage('docker-build'){
+	  steps	 {
+		checkout scm
+		sh 'make serverless-build'
+	  }
+      }
+
+    } // End stages
+
+} // End pipeline

@@ -1,0 +1,2 @@
+sudo aws s3 cp s3://holdings-poc/resources/portfolio-charts-hive-udf-0.0.1.jar /usr/lib/hive-hcatalog/share/hcatalog/portfolio-charts-hive-udf-0.0.1.jar
+sudo aws s3 cp s3://holdings-poc/resources/elasticsearch-hadoop-hive-7.6.1.jar /usr/lib/hive-hcatalog/share/hcatalog/elasticsearch-hadoop-hive-7.6.1.jar

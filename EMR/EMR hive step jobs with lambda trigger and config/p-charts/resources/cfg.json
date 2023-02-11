@@ -1,0 +1,38 @@
+{
+	"dev": {
+		"data_bucket": "dev-output/",
+		"code_bucket": "h-poc",
+		"holdings_details_file": "H_Dtls.csv",
+		"es_host": "http://es-apps.dev:80/",
+		"es_replicas": "1",
+		"es_charts_alias": "equity_data_portfolio_data_alias",
+		"es_bhav_copy_alias": "equity_data_historical_data_alias"
+	},
+	"stage": {
+		"data_bucket": "stg-output/",
+		"code_bucket": "p-code-stg",
+		"holdings_details_file": "H_Dtls.csv",
+		"es_host": "http://es-backoffice.stg/",
+		"es_replicas": "1",
+		"es_charts_alias": "equity_data_portfolio_data_alias",
+		"es_bhav_copy_alias": "equity_data_historical_data_alias"
+	},
+	"pre-prod": {
+		"data_bucket": "stg-output/",
+		"code_bucket": "h-poc",
+		"holdings_details_file": "H_Dtls.csv",
+		"es_host": "http://es-apps.stg:80/",
+		"es_replicas": "1",
+		"es_charts_alias": "data_portfolio_data_alias",
+		"es_bhav_copy_alias": "data_historical_data_alias"
+	},
+	"prod": {
+		"data_bucket": "prod-output/",
+		"code_bucket": "h-poc",
+		"holdings_details_file": "H_Dtls.csv",
+		"es_host": "http://es-apps.prod:80/",
+		"es_replicas": "1",
+		"es_charts_alias": "data_portfolio_data_alias",
+		"es_bhav_copy_alias": "data_historical_data_alias"
+	}
+}
