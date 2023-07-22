@@ -14,7 +14,7 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/feed/ticks');
+    var socket = new SockJS('localhost:8080/feed/ticks');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);

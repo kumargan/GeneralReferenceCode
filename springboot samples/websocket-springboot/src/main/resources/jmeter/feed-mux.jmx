@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.2">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
@@ -15,8 +15,8 @@
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
-          <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
@@ -24,21 +24,22 @@
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.delayedStart">false</boolProp>
       </ThreadGroup>
       <hashTree>
         <JMeter.plugins.functional.samplers.websocket.WebSocketSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebSocketSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebSocketSampler" testname="WebSocket Sampler" enabled="true">
-          <stringProp name="serverAddress">localhost</stringProp>
-          <stringProp name="serverPort">8080</stringProp>
+          <stringProp name="serverAddress">echo.websocket.org </stringProp>
+          <stringProp name="serverPort">80</stringProp>
           <stringProp name="implementation">RFC6455 (v13)</stringProp>
           <stringProp name="protocol">ws</stringProp>
-          <stringProp name="contextPath">/feed/ticks</stringProp>
+          <stringProp name="contextPath"></stringProp>
           <stringProp name="contentEncoding">UTF-8</stringProp>
           <stringProp name="connectPayload">{}</stringProp>
           <stringProp name="subscribePayload">/user/queue/reply</stringProp>
           <stringProp name="connectionTimeout">5000</stringProp>
           <stringProp name="responseTimeout">20000</stringProp>
           <boolProp name="ignoreSslErrors">false</boolProp>
-          <boolProp name="streamingConnection">false</boolProp>
+          <boolProp name="streamingConnection">true</boolProp>
           <boolProp name="stompProtocol">true</boolProp>
           <stringProp name="connectionId"></stringProp>
           <stringProp name="connectPattern">ticks</stringProp>
@@ -65,6 +66,10 @@
               </elementProp>
             </collectionProp>
           </elementProp>
+          <stringProp name="requestPayload"></stringProp>
+          <stringProp name="responsePattern"></stringProp>
+          <boolProp name="isOverrideResponsePattern">false</boolProp>
+          <boolProp name="isOverrideDisconnectPattern">false</boolProp>
         </JMeter.plugins.functional.samplers.websocket.WebSocketSampler>
         <hashTree/>
       </hashTree>

@@ -45,7 +45,7 @@ const client = new StompJs.Client({
 		client.activate();
 
 function connect() {
-	var url = 'http://localhost:8080/feed/ticks';
+	var url = '/feed/ticks';
 	var client = sjsc.create(url);
 	client.on('connection', function () { // connection is established 
 		});

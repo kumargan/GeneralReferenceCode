@@ -1,27 +1,33 @@
 1. sudo apt-get update
-2. sudo apt-get install ubuntu-desktop vnc4server gnome-panel gnome-settings-daemon metacity gnome-terminal nautilus
-3. start vnc server and setup pwd : vncserver
-4. replace all contents in file by the following : .vnc/startup
-	
-	export XKL_XMODMAP_DISABLE=1
-	unset SESSION_MANAGER
-	unset DBUS_SESSION_BUS_ADDRESS
-
-	[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
-	[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
-	xsetroot -solid grey
-	vncconfig -iconic &
-
-	gnome-panel &
-	gnome-settings-daemon &
-	metacity &
-	nautilus &
-	gnome-terminal &
-
-5. kil server once :
+2. sudo apt install xfce4 xfce4-goodies
+3. sudo apt install tightvncserver
+4. start vnc server : 
+	vncserver
+5. chnage vnc password
+	vncpasswd
+6. kill vnc server :
 	vncserver -kill :1
+7. vi ~/.vnc/xstartup
+	
+#!/bin/bash
+xrdb $HOME/.Xresources
+startxfce4 &
+
+5. start vnc server only for localhost
+	vncserver -localhost
 
 6. exit and login again : it should restart the daemons. otherwise start the vnc server while opening the tunnel
-7. open tunnel : ssh -L 5901:localhost:5901 ubuntu@3.84.79.62
+7. open tunnel : 
+	server same as jumpbox : 
+		ssh -L 5901:127.0.0.1:5901 ubuntu@3.237.67.35
 
-Reference : https://stackoverflow.com/questions/25657596/how-to-set-up-gui-on-amazon-ec2-ubuntu-server
+	Vnc server next hop as jumpbox
+		ssh -L 5901:44.200.250.172:5901 -C ubuntu@44.193.8.191
+
+
+8 use VNC client on mac on localport 5901
+
+		Download vnc client ripple (open source ) :  https://remoteripple.com/download/
+
+9. Reference : https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-20-04
+
