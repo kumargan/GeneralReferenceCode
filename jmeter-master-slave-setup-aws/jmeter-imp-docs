@@ -10,11 +10,7 @@ scp "/Users/hslh15412/ganesh/git repo/GeneralReferenceCode/jmeter-master-slave-s
 
 
 
-
-
-1. ubuntu ami (master and slave): 
-	1.1 sudo apt-get update && sudo apt-get install default-jre -y 
-
+********************    Jmeter slave setup *******************
 
 2. start jmeter server on slave : 
 
@@ -59,6 +55,8 @@ WantedBy=multi-user.target
 					sudo systemctl stop jmeter.service
 					sudo systemctl disable jmeter.service
 
+********************    Jmeter master setup *******************
+
 
 2. install jmeter server on master :
 	2.1  wget http://dlcdn.apache.org/jmeter/binaries/apache-jmeter-5.6.2.tgz
@@ -67,14 +65,19 @@ WantedBy=multi-user.target
 	2.5 sudo apt-get update && sudo apt install openjdk-11-jre-headless
 	2.6 sudo cp -r apache-jmeter-5.6.2 /usr/bin/apache-jmeter-5.6.2
 
-3. change ssl required to false and increase heap:
+3. changes 
+		ssl required to false and increase heap:
+			
 		sudo vi /usr/bin/apache-jmeter-5.6.2/bin/user.properties
-
 		modify :  server.rmi.ssl.Descriptionsable=true
 
 		sudo vi /usr/bin/apache-jmeter-5.6.2/bin/jmeter
-
 		modify xmx to 3 gb for 4 gb machine: "${HEAP:="-Xms3g -Xmx3g -XX:MaxMetaspaceSize=256m"}"
+
+		modify remote addresses 
+		sudo vi /usr/bin/apache-jmeter-5.6.2/bin/jmeter.properties
+		remote_hosts=<private ip 1, private ip 2>
+
 
 4. Install vnc server to create desktop in ubuntu :
 	Follow steps in  Remote_Ubuntu_GUI.txt 
@@ -97,4 +100,19 @@ Categories=Application;Network;
 
 5. run a jmx file on server : 
 	3.1 /usr/bin/apache-jmeter-5.6.2/bin/jmeter -n -t google_test.jmx -R 172.31.3.69
+
+6. role to start stop jmeter instances : https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_ec2-start-stop-match-tags.html
+	{
+    "Version": "2012-10-17",
+    "Statement": {
+        "Effect": "Allow",
+        "Action": [
+            "ec2:startInstances",
+            "ec2:stopInstances"
+        ],
+        "Resource": "*",
+        "Condition": {"StringEquals": 
+            {"aws:ResourceTag/CostCenter": "${aws:PrincipalTag/CostCenter}"}}
+    }
+}
 
