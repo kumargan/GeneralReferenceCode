@@ -1,0 +1,2 @@
+web: java -jar jars/authenticator-1.0.jar --server.port=8081
+web_socket: java -jar jars/websocket-mux-1.0.jar --server.port=8080

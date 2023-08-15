@@ -19,10 +19,13 @@ startxfce4 &
 6. exit and login again : it should restart the daemons. otherwise start the vnc server while opening the tunnel
 7. open tunnel : 
 	server same as jumpbox : 
-		ssh -L 5901:127.0.0.1:5901 ubuntu@3.237.67.35
+		ssh -L 5901:127.0.0.1:5901 ec2-user@10.30.96.34
 
 	Vnc server next hop as jumpbox
-		ssh -L 5901:44.200.250.172:5901 -C ubuntu@44.193.8.191
+
+		ssh -A -L 5901:localhost:5901 ec2-user@10.30.96.34 -t ssh -L 5901:localhost:5901 ubuntu@10.30.96.42
+
+
 
 
 8 use VNC client on mac on localport 5901
