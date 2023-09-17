@@ -44,10 +44,13 @@ ssh -A -L 3306:localhost:3306 ec2-user@jumpbox1 -t ssh -A -L 3306:dest:3306 ec2-
  7 Add certificate to java key store mac :
  	password : changeit
 
- 	keytool -import -alias maven_cert_5 -file /Users/hslh15412/Downloads/repo1.maven.org.cer -keystore  /opt/homebrew/Cellar/openjdk/20.0.1/libexec/openjdk.jdk/Contents/Home/lib/security/cacerts
+ 	keytool -import -alias maven_cert_8 -file /Users/hslh15412/Downloads/maven_cert_6.cer -keystore  /opt/homebrew/Cellar/openjdk/20.0.1/libexec/openjdk.jdk/Contents/Home/lib/security/cacerts
 
- 	keytool -import -alias maven_cert_7 -file /Users/hslh15412/Downloads/repo.maven.apache.org.cer -keystore  /opt/homebrew/Cellar/openjdk/20.0.1/libexec/openjdk.jdk/Contents/Home/lib/security/cacerts
+ 	keytool -import -alias maven_cert_10 -file /Users/hslh15412/Downloads/repo.maven.apache.org.cer -keystore  /opt/homebrew/Cellar/openjdk/20.0.1/libexec/openjdk.jdk/Contents/Home/lib/security/cacerts
 
 
- 	keytool -import -alias maven_cert_1 -file /Users/hslh15412/Downloads/repo1.maven.org.cer -keystore  /opt/homebrew/Cellar/openjdk@11/11.0.20.1/libexec/openjdk.jdk/Contents/Home/lib/security/cacerts
+ 	keytool -import -alias maven_cert_9 -file /Users/hslh15412/Downloads/repo.maven.apache.org.cer -keystore  /opt/homebrew/Cellar/openjdk@11/11.0.20.1/libexec/openjdk.jdk/Contents/Home/lib/security/cacerts
+
+
+ 	try to get all jars from  : https://repo.maven.apache.org/maven2
 		
