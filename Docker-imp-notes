@@ -1,0 +1,17 @@
+docker pull docker.elastic.co/elasticsearch/elasticsearch:8.3.3
+docker pull docker.elastic.co/kibana/kibana:8.3.3
+
+
+docker network create elknetwork
+
+//start elastic search
+docker run --name esc1 --net elknetwork -p 9200:9200 -p 9300:9300 -it docker.elastic.co/elasticsearch/elasticsearch:8.8.2
+
+ user :  elastic
+ pwd : check starup logs
+
+//start kibana
+docker run --name kibc1 --net elknetwork -p 5601:5601 docker.elastic.co/kibana/kibana:8.8.2
+
+//copy and paster token into kibana  from ES terminal
+// use es user and password from above to login into kibana

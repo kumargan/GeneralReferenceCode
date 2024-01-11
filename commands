@@ -1,7 +1,10 @@
 connect via multiple hosts :
 
 1. Add all the ssh keys to local agent and run the following 
-ssh -A -L 3306:localhost:3306 ec2-user@jumpbox1 -t ssh -A -L 3306:dest:3306 ec2-user@jumpbox2
+	ssh -A -L 3306:localhost:3306 ec2-user@jumpbox1 -t ssh -A -L 3306:dest:3306 ec2-user@jumpbox2
+
+	list all keys in ssh agent : ssh-add -l
+	remove all keys from ssh-agent : ssh-add -D
 
 
 2. Zepplin on EMR ( https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-web-interfaces.html)
@@ -28,6 +31,8 @@ ssh -A -L 3306:localhost:3306 ec2-user@jumpbox1 -t ssh -A -L 3306:dest:3306 ec2-
 		Host dev-server
  		 Hostname 10.7.32.127
  		 User ubuntu
+		 IdentityFile /Users/ganesh/projects/aws/jmeterkey.pem
+
  		 ProxyCommand ssh -q -W %h:%p equity-bastion
 
 		Host equity-bastion
@@ -46,11 +51,14 @@ ssh -A -L 3306:localhost:3306 ec2-user@jumpbox1 -t ssh -A -L 3306:dest:3306 ec2-
 
  	keytool -import -alias maven_cert_8 -file /Users/hslh15412/Downloads/maven_cert_6.cer -keystore  /opt/homebrew/Cellar/openjdk/20.0.1/libexec/openjdk.jdk/Contents/Home/lib/security/cacerts
 
- 	keytool -import -alias maven_cert_10 -file /Users/hslh15412/Downloads/repo.maven.apache.org.cer -keystore  /opt/homebrew/Cellar/openjdk/20.0.1/libexec/openjdk.jdk/Contents/Home/lib/security/cacerts
+ 	keytool -import -alias maven_cert_10 -file /Users/hslh15412/Downloads/repo.maven.apache.org.cer -keystore  /opt/homebrew/Cellar/openjdk@17/17.0.8.1/libexec/openjdk.jdk/Contents/Home/lib/security/cacerts
 
 
- 	keytool -import -alias maven_cert_9 -file /Users/hslh15412/Downloads/repo.maven.apache.org.cer -keystore  /opt/homebrew/Cellar/openjdk@11/11.0.20.1/libexec/openjdk.jdk/Contents/Home/lib/security/cacerts
+ 	keytool -import -alias maven_cert_11 -file /Users/hslh15412/Downloads/repo.maven.apache.org.cer -keystore  /opt/homebrew/Cellar/openjdk@11/11.0.20.1/libexec/openjdk.jdk/Contents/Home/lib/security/cacerts
 
 
  	try to get all jars from  : https://repo.maven.apache.org/maven2
+
+Ignore certificates : mvn -Dmaven.resolver.transport=wagon -Dmaven.wagon.http.ssl.ignore.validity.dates=true -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true  package > build.logs
+
 		

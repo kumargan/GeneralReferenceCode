@@ -1,0 +1,28 @@
+
+// load swagger or any other html from source server using cname eg. https://uat-consent.domain.com/user-consent/swagger-ui.html
+// use follwong on browser console to make call to healthcheck endpoint. it shoul fail wiht cors then make it work.
+
+
+
+function run() {
+ 
+			    // test CORS changes
+			    let xhr = new XMLHttpRequest();
+			 
+			    // Making our connection  
+			    let url = 'https://hsl-aws-aps1-alb-uat-new-510469300.ap-south-1.elb.amazonaws.com/user-consent/health';
+			    xhr.open("GET", url, true);
+			 
+			    // function execute after request is successful 
+			    xhr.onreadystatechange = function () {
+			        if (this.readyState == 4 && this.status == 200) {
+			            console.log(this.responseText);
+			        }
+			    }
+			    // Sending our request 
+			    xhr.send();
+			}
+
+run()
+
+
