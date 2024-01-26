@@ -33,3 +33,14 @@
 		1. create replicas for new index
 		2. change alias from old index to new one
 		3. delete old index.
+		
+	5. Loading hive functions :
+
+		sudo aws s3 cp s3://etl-artefacts/code/portfolio-charts-hive-udf-0.0.1.jar /usr/lib/hive-hcatalog/share/hcatalog/portfolio-charts-hive-udf-0.0.1.jar
+		ADD JAR /usr/lib/hive-hcatalog/share/hcatalog/portfolio-charts-hive-udf-0.0.1.jar;
+		CREATE TEMPORARY FUNCTION GetMinIndex AS 'com.company.hive.udf.GetMinIndex';
+
+	6. Sample data 
+
+		create table test(id string,date_ string ,price int) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+		LOAD DATA LOCAL INPATH '/home/hadoop/data.csv' OVERWRITE INTO TABLE test;
